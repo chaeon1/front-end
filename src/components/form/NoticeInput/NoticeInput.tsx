@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import useNoticeStore from '../../../../store/useNoticeStore';
+import useNoticeStore from '../../../store/useNoticeStore';
+import TrashBinIcon from '../../icons/TrashBinIcon';
 import { Notice } from './NoticeItem';
-import TrashBinIcon from '../../../icons/TrashBinIcon';
-import CloudArrow from '../../../icons/CloudArrowIcon';
-import CloseIcon from '../../../icons/CloseIcon';
+import CloudArrow from '../../icons/CloudArrow';
+import CloseIcon from '../../icons/CloseIcon';
 
-const NoticeFeature = () => {
+const NoticeInput = () => {
   const {
     notices,
     expandedIds,
@@ -34,14 +34,14 @@ const NoticeFeature = () => {
   const accordionItems = useMemo(
     () =>
       notices.map((notice, index) => ({
-        id: notice.id,
+        id: index,
         title: (
           <div className="flex items-center gap-2">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 if (confirm('이 공지를 정말 삭제하시겠습니까?'))
-                  deleteNotice(notice.id);
+                  deleteNotice(index);
               }}
             >
               <TrashBinIcon />
@@ -59,9 +59,7 @@ const NoticeFeature = () => {
                 type="text"
                 placeholder="제목을 입력해주세요"
                 value={notice.title}
-                onChange={(e) =>
-                  updateNotice(notice.id, 'title', e.target.value)
-                }
+                onChange={(e) => updateNotice(index, 'title', e.target.value)}
                 className="formInput w-full"
               />
             </div>
@@ -71,9 +69,7 @@ const NoticeFeature = () => {
               <textarea
                 placeholder="내용을 입력해주세요"
                 value={notice.content}
-                onChange={(e) =>
-                  updateNotice(notice.id, 'content', e.target.value)
-                }
+                onChange={(e) => updateNotice(index, 'content', e.target.value)}
                 rows={4}
                 className="formInput w-full"
               />
@@ -82,14 +78,14 @@ const NoticeFeature = () => {
             <div className="flex flex-col gap-2">
               <label className="label w-full">이미지 업로드</label>
               {notice.image ? (
-                <div className="relative">
+                <div key={index} className="relative">
                   <img
                     src={notice.image}
-                    alt={`Uploaded ${notice.id}`}
+                    alt={`Uploaded ${index}`}
                     className="object-cover w-full h-52 rounded-md border"
                   />
                   <button
-                    onClick={() => updateNotice(notice.id, 'image', null)}
+                    onClick={() => updateNotice(index, 'image', null)}
                     className="absolute top-1 right-1 bg-gray-800 text-white rounded-full p-1"
                   >
                     <CloseIcon className="size-[12px]" />
@@ -109,10 +105,7 @@ const NoticeFeature = () => {
                       type="file"
                       accept="image/*"
                       onChange={(e) =>
-                        handleImageUpload(
-                          notice.id,
-                          e.target.files?.[0] || null,
-                        )
+                        handleImageUpload(index, e.target.files?.[0] || null)
                       }
                       className="hidden"
                     />
@@ -135,6 +128,7 @@ const NoticeFeature = () => {
         </div>
       </div>
       <hr className="mb-5 border-gray-300" />
+      <hr className="mb-5 border-gray-300" />
 
       <Notice
         items={accordionItems}
@@ -154,4 +148,4 @@ const NoticeFeature = () => {
   );
 };
 
-export default NoticeFeature;
+export default NoticeInput;
